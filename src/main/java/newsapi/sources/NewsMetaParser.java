@@ -15,6 +15,7 @@ public class NewsMetaParser {
     final static String TITLE = "og:title";
     final static String TYPE = "og:type";
     final static String DESCRIPTION = "og:description";
+    final static String DESCRIPTION2 = "description";
     final static String PUB_DATE = "publish-date";
     final static String PUB_DATE2 = "article:published_time";
     final static String IMAGE_URL = "og:image";
@@ -32,11 +33,12 @@ public class NewsMetaParser {
         NewsArticle newsArticle = new NewsArticle();
         newsArticle.setSourceUrl(newsArticleUrl);
 
-        Document doc = null;
+        Document doc;
         try {
             doc = Jsoup.connect(newsArticleUrl).get();
         } catch (IOException e) {
-            e.printStackTrace();
+            //e.printStackTrace(); // silently fail
+            return null;
         }
 
         if (doc != null) {
@@ -58,11 +60,11 @@ public class NewsMetaParser {
                         newsArticle.setType(content);
                         break;
                     case DESCRIPTION:
-                        newsArticle.setDescription(content);
+                    case DESCRIPTION2:
+                        if(newsArticle.getDescription() == null)
+                            newsArticle.setDescription(content);
                         break;
                     case PUB_DATE:
-                        newsArticle.setPublishDate(content);
-                        break;
                     case PUB_DATE2:
                         if(newsArticle.getPublishDate() == null)
                             newsArticle.setPublishDate(content);
